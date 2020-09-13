@@ -20,12 +20,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private WordsRepository wordsRepository;
 
-    public ApplicationServiceImpl(WordsRepository wordsRepository){
-        this.wordsRepository = wordsRepository;
+    public ApplicationServiceImpl() {
     }
 
     /**
-     *Метод загрузки HTML-страницы на жесткий диск компьютера
+     * Метод загрузки HTML-страницы на жесткий диск компьютера
+     *
      * @throws IOException
      */
     @Override
@@ -97,8 +97,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         System.out.println(resultUniqueWords);
-        wordsRepository.save(new WordsEntity(resultUniqueWords.keySet().toString(), resultUniqueWords.values().toString() ));
-
         System.out.println("Количество уникальных слов на странице - " + resultUniqueWords.size());
+        wordsRepository.save(new WordsEntity(resultUniqueWords.keySet().toString(), resultUniqueWords.values().toString()));
+
+
     }
 }
