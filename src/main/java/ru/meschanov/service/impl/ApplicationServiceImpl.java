@@ -20,6 +20,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private WordsRepository wordsRepository;
 
+    public ApplicationServiceImpl(WordsRepository wordsRepository) {
+        this.wordsRepository = wordsRepository;
+    }
+
     public ApplicationServiceImpl() {
     }
 
@@ -92,14 +96,20 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         HashMap<String, Integer> resultUniqueWords = new HashMap<String, Integer>();
 
+
         for (String s : wordList) {
             resultUniqueWords.put(s, Collections.frequency(wordList, s));
         }
 
-        System.out.println(resultUniqueWords);
+        //   System.out.println(resultUniqueWords.entrySet());
+
+        for (Map.Entry<String, Integer> pair : resultUniqueWords.entrySet()) {
+            String value = pair.getKey() + "-" + pair.getValue();
+            System.out.println(value);
+        }
+
         System.out.println("Количество уникальных слов на странице - " + resultUniqueWords.size());
+
         wordsRepository.save(new WordsEntity(resultUniqueWords.keySet().toString(), resultUniqueWords.values().toString()));
-
-
     }
 }
