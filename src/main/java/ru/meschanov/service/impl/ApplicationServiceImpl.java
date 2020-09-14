@@ -106,6 +106,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (Map.Entry<String, Integer> pair : resultUniqueWords.entrySet()) {
             String value = pair.getKey() + "-" + pair.getValue();
             System.out.println(value);
+            //wordsRepository.save(new WordsEntity())
         }
 
         System.out.println("Количество уникальных слов на странице - " + resultUniqueWords.size());
