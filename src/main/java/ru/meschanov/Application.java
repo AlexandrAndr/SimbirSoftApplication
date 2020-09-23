@@ -3,35 +3,29 @@ package ru.meschanov;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.meschanov.service.api.ApplicationService;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
 @SpringBootApplication
 public class Application {
 
+    private static final String FILE_PATH = "D:\\Download_File.html";
+
     public static void main(String[] args) throws IOException {
-        //SpringApplication.run(Application.class, args);
 
         ApplicationContext context = SpringApplication.run(Application.class, args);
+
         ApplicationService service = context.getBean(ApplicationService.class);
 
-        service.downloaderHttpPage();
-        service.readPage();
-        service.countWord();
+        URL url = service.readUrlFromConsole();
+
+        service.savePageToFile(FILE_PATH, url.openConnection().getInputStream());
+
+        List<String> words = service.readPage(FILE_PATH);
+
+        service.countWord(words);
     }
 }
-
-
-
-//
-////        WordsRepository wordsRepository = new WordsRepository() {
-////        };
-//
-//        ApplicationServiceImpl applicationService = new ApplicationServiceImpl();
-//
-//
-//        applicationService.downloaderHttpPage();
-//        applicationService.readPage();
-//        applicationService.countWord();

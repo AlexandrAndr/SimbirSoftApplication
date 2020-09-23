@@ -1,76 +1,86 @@
 package ru.meschanov.service.impl;
 
+import lombok.AllArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import ru.meschanov.domains.WordsEntity;
 import ru.meschanov.repository.WordsRepository;
 import ru.meschanov.service.api.ApplicationService;
-import sun.nio.cs.StandardCharsets;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
+@AllArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
-
-    private List<String> wordList = new ArrayList<String>();
-
-    private WordsRepository wordsRepository;
-
-    public ApplicationServiceImpl(WordsRepository wordsRepository) {
-        this.wordsRepository = wordsRepository;
-    }
-
-    public ApplicationServiceImpl() {
-    }
+    private static final Logger LOGGER = Logger.getLogger(ApplicationServiceImpl.class.getName());
 
     /**
-     * Метод загрузки HTML-страницы на жесткий диск компьютера
-     *
-     * @throws IOException
+     * Репозиторий
      */
+    private WordsRepository wordsRepository;
+
+
     @Override
-    public void downloaderHttpPage() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String FILENAME = "D:\\Download_File.html";
+    public URL readUrlFromConsole() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.println("Введите URL HTML-страницы в формате - https://www.HelloWorld.com/:");
+        LOGGER.info("Указываем Html- страницу");
 
-        URL url = new URL(reader.readLine());
+        Pattern pattern = Pattern.compile("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILENAME));
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openConnection().
-                     getInputStream(), "UTF-8"))) {
+        URL url = null;
+
+        while (url == null) {
+            LOGGER.info("Введите URL HTML-страницы в формате - https://www.HelloWorld.com/:");
+            try {
+                String line = bufferedReader.readLine();
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    url = new URL(line);
+                } else {
+                    LOGGER.error("Невалидный URL");
+                }
+            } catch (IOException e) {
+                LOGGER.error("Ошибка чтения URL", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return url;
+    }
+
+    @Override
+    public void savePageToFile(String filePath, InputStream content) {
+
+        LOGGER.debug(String.format("Начинаем запись в файл %s", filePath));
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath));
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8))) {
 
             String line;
 
             while ((line = bufferedReader.readLine()) != null) {
                 bufferedWriter.write(line);
+                bufferedWriter.write("\\n\\r");
             }
 
-            bufferedWriter.close();
-            bufferedReader.close();
-
         } catch (IOException exception) {
-            exception.printStackTrace();
+            LOGGER.error("Ошибка при записи в файл", exception);
         }
+        LOGGER.debug(String.format("Запись в файл %s успешно завершена", filePath));
     }
 
-    /**
-     * Метод чтения загруженной HTML-страницы
-     */
     @Override
-    public void readPage() {
-        String path = "D:\\Download_File.html";
+    public List<String> readPage(String filePath) {
+        List<String> wordList = new ArrayList<>();
+        File file = new File(filePath);
 
-        File file = new File(path);
-        Scanner scanner = null;
-
-        try {
-            scanner = new Scanner(file);
+        try (Scanner scanner = new Scanner(file)) {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -82,35 +92,30 @@ public class ApplicationServiceImpl implements ApplicationService {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            scanner.close();
+            LOGGER.error("Ошибка чтения из файла", e);
         }
+
+        return wordList;
     }
 
-    /**
-     * Метод подсчета уникальных слов
-     */
     @Override
-    public void countWord() {
+    public void countWord(List<String> wordList) {
 
-        HashMap<String, Integer> resultUniqueWords = new HashMap<String, Integer>();
-
+        List<WordsEntity> words = new ArrayList<>();
+        HashMap<String, Integer> resultUniqueWords = new HashMap<>();
 
         for (String s : wordList) {
             resultUniqueWords.put(s, Collections.frequency(wordList, s));
         }
 
-        //   System.out.println(resultUniqueWords.entrySet());
-
         for (Map.Entry<String, Integer> pair : resultUniqueWords.entrySet()) {
             String value = pair.getKey() + "-" + pair.getValue();
-            System.out.println(value);
-            //wordsRepository.save(new WordsEntity())
+            LOGGER.info(value);
+            words.add(new WordsEntity(pair.getKey(), pair.getValue()));
         }
 
-        System.out.println("Количество уникальных слов на странице - " + resultUniqueWords.size());
+        LOGGER.info("Количество уникальных слов на странице - " + resultUniqueWords.size());
 
-        wordsRepository.save(new WordsEntity(resultUniqueWords.keySet().toString(), resultUniqueWords.values().toString()));
+        wordsRepository.saveAll(words);
     }
 }

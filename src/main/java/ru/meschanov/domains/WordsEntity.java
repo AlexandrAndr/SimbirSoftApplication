@@ -23,17 +23,9 @@ public class WordsEntity {
     private String word;
 
     @Column(name = "frequency")
-    private String frequencyWord;
+    private Integer frequencyWord;
 
-//    public WordsEntity(String word){
-//        this.word = word;
-//    }
-//
-//    public WordsEntity(Long frequencyWord){
-//        this.frequencyWord = frequencyWord;
-//    }
-
-    public WordsEntity(String word, String frequencyWord){
+    public WordsEntity(String word, Integer frequencyWord){
         this.word = word;
         this.frequencyWord = frequencyWord;
     }
