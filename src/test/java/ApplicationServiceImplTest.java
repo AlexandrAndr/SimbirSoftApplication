@@ -1,4 +1,3 @@
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,14 +42,13 @@ public class ApplicationServiceImplTest {
     @Test
     public void shouldReadPageTest() throws IOException {
 
-       // String filePath = "C:/Users/79997/SimbirSoftApplication/target/test-classes/downloadFile.txt";
-        String filePath = "C:\\Users\\79997\\SimbirSoftApplication\\src\\test\\resources\\downloadFile.txt";
+        String filePath = "C:\\Users\\79997\\SimbirSoftApplication\\src\\test\\resources\\file.txt";
 
         service.readPage(filePath);
 
         String expected = "шайтан";
 
-        String actual = IOUtils.toString(getClass().getResourceAsStream("downloadFile.txt"), "UTF-8");
+        String actual = IOUtils.toString(getClass().getResourceAsStream("file.txt"), "UTF-8");
 
         assertEquals(expected, actual);
 
