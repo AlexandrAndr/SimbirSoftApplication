@@ -1,16 +1,15 @@
 package ru.meschanov.domains;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Entity
 @Table(name = "unique_words")
 @Setter
 @Getter
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 public class WordsEntity {
 
