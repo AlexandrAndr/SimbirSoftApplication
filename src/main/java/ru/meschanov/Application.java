@@ -20,7 +20,7 @@ public class Application {
 
         ApplicationService service = context.getBean(ApplicationService.class);
 
-        URL url = service.readUrlFromConsole();
+        URL url = new URL(args[0]);
 
         service.savePageToFile(FILE_PATH, url.openConnection().getInputStream());
 
