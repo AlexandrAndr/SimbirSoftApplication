@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
+    private static final String EMPTY_URL_ERROR_TEXT = "Не задан URL";
+
     private static final Logger LOGGER = Logger.getLogger(ApplicationServiceImpl.class.getName());
 
     /**
@@ -27,12 +29,21 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
+    public boolean urlValidation(String argument) {
+        if (argument == null) {
+            throw new RuntimeException(EMPTY_URL_ERROR_TEXT);
+        }
+        Pattern pattern = Pattern.compile("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+        Matcher matcher = pattern.matcher(argument);
+
+        return matcher.find();
+    }
+
+    @Override
     public URL readUrlFromConsole() {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         LOGGER.info("Указываем Html- страницу");
-
-        Pattern pattern = Pattern.compile("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
         URL url = null;
 
@@ -40,8 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             LOGGER.info("Введите URL HTML-страницы в формате - https://www.HelloWorld.com/:");
             try {
                 String line = bufferedReader.readLine();
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
+                if (urlValidation(line)) {
                     url = new URL(line);
                 } else {
                     LOGGER.error("Невалидный URL");

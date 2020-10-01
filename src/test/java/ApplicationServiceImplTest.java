@@ -8,12 +8,14 @@ import ru.meschanov.domains.WordsEntity;
 import ru.meschanov.repository.WordsRepository;
 import ru.meschanov.service.impl.ApplicationServiceImpl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceImplTest {
@@ -42,44 +44,28 @@ public class ApplicationServiceImplTest {
     @Test
     public void shouldReadPageTest() throws IOException {
 
-        String filePath = "C:\\Users\\79997\\SimbirSoftApplication\\src\\test\\resources\\file.txt";
-
-        service.readPage(filePath);
+        String filePath = getClass().getResource("file.txt").getPath();
 
         String expected = "шайтан";
 
-        String actual = IOUtils.toString(getClass().getResourceAsStream("file.txt"), "UTF-8");
+        List<String> actual = service.readPage(filePath);
 
-        assertEquals(expected, actual);
+        assertEquals(expected, actual.get(0));
 
     }
 
     @Test
     public void shouldCountWord() {
 
-        String value = null;
+        List<String> wordList = Arrays.asList("TEST-1", "TEST-1", "TEST-2");
+        List<WordsEntity> expectedList = new ArrayList<>();
 
-        List<String> wordList = new ArrayList<>();
-        List<WordsEntity> words = new ArrayList<>();
-        Map<String, Integer> resultUniqueWords = new HashMap<>();
-
-        wordList.add("СимбирСофт");
-
-        for (String s : wordList) {
-            resultUniqueWords.put(s, Collections.frequency(wordList, s));
-        }
-
-        for (Map.Entry<String, Integer> pair : resultUniqueWords.entrySet()) {
-            value = pair.getKey() + "-" + pair.getValue();
-
-            words.add(new WordsEntity(pair.getKey(), pair.getValue()));
-        }
-
-        String expected = "СимбирСофт-1";
-        String actual = value;
+        expectedList.add(new WordsEntity("TEST-1", 2));
+        expectedList.add(new WordsEntity("TEST-2", 1));
 
         service.countWord(wordList);
 
-        assertEquals(expected, actual);
+        verify(wordsRepository).saveAll(expectedList);
+
     }
 }

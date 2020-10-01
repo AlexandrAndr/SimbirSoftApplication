@@ -8,6 +8,13 @@ import java.util.List;
 
 public interface ApplicationService {
 
+    /** Метод проверки валидности URL
+     *
+     * @param argument URL
+     * @return true, если аргумент соответствует шаблону
+     */
+    boolean urlValidation(String argument);
+
     /** Метод считывает URL из кончоли
      *
      * @return url
