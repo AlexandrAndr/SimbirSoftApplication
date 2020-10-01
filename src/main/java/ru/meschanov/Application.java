@@ -14,15 +14,8 @@ public class Application {
 
     private static final String INVALID_ARGUMENT_LIST_ERROR_TEXT = "Невалидный набор параметров запуска";
     private static final String INVALID_URL_TEXT = "Невалидный URL";
-
-    // Профили для БД
-    private static final Integer PROFILE_DEVELOPMENT = 2;
-    private static final Integer PROFILE_PRODUCTION = 3;
-
     private static final Integer USE_CONSOLE_NUMBER_PARAM = 0;
     private static final Integer ARGUMENT_URL_NUMBER_PARAM = 1;
-
-
     private static final String FILE_PATH = "D:\\Download_File.html";
 
     public static void main(String[] args) throws IOException {

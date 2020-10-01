@@ -30,9 +30,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public boolean urlValidation(String argument) {
+
         if (argument == null) {
             throw new RuntimeException(EMPTY_URL_ERROR_TEXT);
         }
+
         Pattern pattern = Pattern.compile("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
         Matcher matcher = pattern.matcher(argument);
 
