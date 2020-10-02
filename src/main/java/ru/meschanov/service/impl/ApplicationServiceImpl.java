@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String EMPTY_URL_ERROR_TEXT = "Не задан URL";
-
     private static final Logger LOGGER = Logger.getLogger(ApplicationServiceImpl.class.getName());
 
     /**
