@@ -28,6 +28,11 @@ public class ApplicationServiceImplTest {
     private ApplicationServiceImpl service;
 
     @Test
+    public void shouldValidatePathDownloadFileTest() {
+        assertTrue(service.pathValidation("D:\\someFolder\\someFolder2"));
+    }
+
+    @Test
     public void shouldValidateUrlTest() {
 
         assertTrue(service.urlValidation("https://someurl.ru/"));
@@ -75,4 +80,5 @@ public class ApplicationServiceImplTest {
         verify(wordsRepository).saveAll(expectedList);
 
     }
+
 }

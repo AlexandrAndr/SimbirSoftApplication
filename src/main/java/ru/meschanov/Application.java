@@ -1,10 +1,10 @@
 package ru.meschanov;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import ru.meschanov.service.api.ApplicationService;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -12,11 +12,12 @@ import java.util.List;
 @SpringBootApplication
 public class Application {
 
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
+
     private static final String INVALID_ARGUMENT_LIST_ERROR_TEXT = "Невалидный набор параметров запуска";
     private static final String INVALID_URL_TEXT = "Невалидный URL";
     private static final Integer USE_CONSOLE_NUMBER_PARAM = 0;
     private static final Integer ARGUMENT_URL_NUMBER_PARAM = 1;
-    private static final String FILE_PATH = "D:\\Download_File.html";
 
     public static void main(String[] args) throws IOException {
 
@@ -39,9 +40,11 @@ public class Application {
             throw new RuntimeException(INVALID_URL_TEXT);
         }
 
-        service.savePageToFile(FILE_PATH, url.openConnection().getInputStream());
+        String filePath = service.readPathDownload();
 
-        List<String> words = service.readPage(FILE_PATH);
+        service.savePageToFile(filePath, url.openConnection().getInputStream());
+
+        List<String> words = service.readPage(filePath);
 
         service.countWord(words);
     }

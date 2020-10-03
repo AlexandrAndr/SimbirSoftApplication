@@ -21,11 +21,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final String EMPTY_URL_ERROR_TEXT = "Не задан URL";
     private static final Logger LOGGER = Logger.getLogger(ApplicationServiceImpl.class.getName());
 
+    private static final String EMPTY_PATH_ERROR_TEXT = "Не задан путь загрузки";
+
     /**
      * Репозиторий
      */
     private WordsRepository wordsRepository;
-
 
     @Override
     public boolean urlValidation(String argument) {
@@ -128,5 +129,59 @@ public class ApplicationServiceImpl implements ApplicationService {
         LOGGER.info("Количество уникальных слов на странице - " + resultUniqueWords.size());
 
         wordsRepository.saveAll(words);
+    }
+
+    @Override
+    public String readPathDownload() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        String path = null;
+        String nameFile = null;
+
+        LOGGER.info("Укажите название файла:");
+
+        try {
+            nameFile = bufferedReader.readLine() + ".html";
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        while (path == null) {
+            try {
+
+                LOGGER.info("Укажите путь загрузки файла в формате - C:\\someFolder\\someFolder2:");
+
+                String linePath = bufferedReader.readLine();
+
+                if (pathValidation(linePath)) {
+
+                    path = new String(linePath + "\\" + nameFile);
+
+                } else {
+
+                    LOGGER.info("Неверно указан путь загрузки! ");
+                }
+            } catch (IOException e) {
+
+                LOGGER.error("Ошибка чтения пути загрузки", e);
+
+                throw new RuntimeException(e);
+            }
+        }
+        return path;
+    }
+
+    @Override
+    public boolean pathValidation(String argument) {
+
+        if (argument == null) {
+            throw new RuntimeException(EMPTY_PATH_ERROR_TEXT);
+        }
+
+        Pattern pattern = Pattern.compile("^(.+):(\\\\.*)");
+        Matcher matcher = pattern.matcher(argument);
+
+        return matcher.find();
     }
 }
